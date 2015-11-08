@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds, GADTs, StandaloneDeriving #-}
 
-module Page2 (Black(Leaf)) where
+module Page2 (Red(Red), Black(Leaf, Black2, Black3, Black4), Root) where
 
 import Data.Type.Natural
 
