@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds, GADTs, StandaloneDeriving #-}
 
-module Page2 (Red(Red), Black(Leaf, Black2, Black3, Black4), Root) where
+module Page2 (Red(Red), Black(Leaf, Black2, Black3, Black4), Root(Root)) where
 
 import Data.Type.Natural
 
@@ -18,3 +18,5 @@ deriving instance Show a => Show (Red a n)
 
 data Root a where
   Root :: Black a n -> Root a
+
+deriving instance Show a => Show (Root a)
