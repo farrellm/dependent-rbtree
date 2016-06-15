@@ -16,14 +16,20 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Lib
+                     , Page2
+                     , Page3
+                     , Page4.Page4
+                     , Page4.Types
+  ghc-options:         -W
   build-depends:       base >= 4.7 && < 5
+                     , QuickCheck
                      , type-natural
   default-language:    Haskell2010
 
 executable dependent-rbtree-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -W
   build-depends:       base
                      , dependent-rbtree
   default-language:    Haskell2010
