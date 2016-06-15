@@ -1,18 +1,25 @@
 # For more information, see: https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-3.11
+resolver: lts-6.3
 
 # Local packages, usually specified by relative directory name
 packages:
 - '.'
+- location:
+    git: git@github.com:konn/type-natural.git
+    commit: dcc20f6206373b7328fa873d20750e418ff90833
+  extra-dep: true
+- location:
+    git: git@github.com:konn/ghc-typelits-presburger.git
+    commit: 44c75cd679c1782e68824b67e192bfdb32abb5b0
+  extra-dep: true
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
-- type-natural-0.3.0.0
+# - type-natural-0.3.0.0
 - equational-reasoning-0.2.0.7
 - monomorphic-0.0.3.3
-- singletons-2.0.1
 
 # Override default flag values for local packages and extra-deps
 flags: {}
