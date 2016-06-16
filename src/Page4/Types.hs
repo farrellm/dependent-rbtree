@@ -70,9 +70,7 @@ data BlackCrumb n a where
           a -> Black n a -> RBCrumb (S n) a -> BlackCrumb (S n) a
         LeftBlack3Crumb ::
           a -> Red n a -> RBCrumb (S n) a -> BlackCrumb (S n) a
-        -- Redundant:
-        -- RightBlack3Crumb ::
-        --   a -> Black n a -> RBCrumb (S n) a -> BlackCrumb (S n) a
+        -- RightBlack3Crumb is semantically equivalent ot RightBlack2Crumb
 
 deriving instance Show a => Show (BlackCrumb n a)
 deriving instance Show a => Show (RedCrumb n a)
@@ -89,8 +87,6 @@ data BlackZip n a where
           a -> Black n a -> Black n a -> RBCrumb (S n) a -> BlackZip (S n) a
         Black3Zip ::
           a -> Red n a -> Black n a -> RBCrumb (S n) a -> BlackZip (S n) a
-        Black4Zip ::
-          a -> Red n a -> Red n a -> RBCrumb (S n) a -> BlackZip (S n) a
 
 deriving instance Show a => Show (BlackZip n a)
 deriving instance Show a => Show (RedZip n a)
