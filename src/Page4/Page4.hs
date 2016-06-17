@@ -12,8 +12,6 @@ module Page4.Page4
 import Data.Type.Natural
 import Page4.Types
 
-import Debug.Trace
-
 (&) :: a -> (a->b) -> b
 x & f = f x
 
@@ -136,21 +134,29 @@ unwindR z = case z of
   (TempZip v l r RootCrumb) ->
     Root (Black2 v l r)
 
-  (TempZip v l r (LeftRedCrumb a xl (RightBlack2Crumb b hr hp))) ->
-    error (show z)
-    -- let xr = Red v l r
-    -- in case hp of
-    --   Right bhp -> unwindB (Black3Zip b xr hr (Left $ LeftRedCrumb a xl bhp))
-    --   Left rhp -> unwindB (Black3Zip b xr hr (Left $ LeftTempCrumb a xl rhp))
+  (TempZip b xl xr (LeftRedCrumb a hl hp)) ->
+    -- left rotate
+    unwindR (TempZip a hl xl (RightRedCrumb b xr hp))
   (TempZip v l r (RightRedCrumb a xr (RightBlack2Crumb b hr hp))) ->
+    -- rotate right + flip
     let xl = Black2 v l r
     in case hp of
       Right bhp -> unwindB (Black2Zip b xr hr (Left $ LeftRedCrumb a xl bhp))
       Left rhp -> unwindB (Black2Zip b xr hr (Left $ LeftTempCrumb a xl rhp))
 
+  (TempZip _v _l _r (RightRedCrumb _b _xr (LeftBlack2Crumb _a _hl _hp))) ->
+    -- impossible - needed a red right subtree
+    error (show z)
+
+  (TempZip _v _l _r (RightRedCrumb _b _xr (LeftBlack3Crumb _a _hr _hp))) ->
+    -- impossible - needed a red right subtree
+    error (show z)
+
   (TempZip b xl xr (LeftTempCrumb a hl hc)) ->
+    -- rotate left
     unwindR (TempZip a hl xl (RightTempCrumb b xr hc))
-  (TempZip v l r (RightTempCrumb a xr _)) ->
+  (TempZip _v _l _r (RightTempCrumb _a _xr _xp)) ->
+    -- this should never happen
     error (show z)
 
   (RedZip b xl xr (LeftBlack2Crumb a hl hp)) ->
@@ -159,6 +165,7 @@ unwindR z = case z of
     unwindB (Black3Zip pv (Red v l r) pr pc)
 
   (RedZip v l r (LeftBlack3Crumb pv (Red plv pll plr) epc)) ->
+    -- flip
     case epc of
       Right pc -> unwindR (RedZip pv (Black2 plv pll plr) (Black2 v l r) pc)
       Left pc -> unwindR (TempZip pv (Black2 plv pll plr) (Black2 v l r) pc)
