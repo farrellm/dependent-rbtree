@@ -41,7 +41,9 @@ toZip n c =
         (Right cb) -> Left (RedZip v l r cb)
         (Left cr)  -> Left (TempZip v l r cr)
 
-findLeaf :: forall a n . (Ord a) => a -> Either (RedZip n a) (BlackZip n a) -> BlackZip Z a
+findLeaf
+  :: forall a n. (Ord a,Show a)
+  => a -> Either (RedZip n a) (BlackZip n a) -> BlackZip Z a
 findLeaf u z =
   case z of
     Right l@(LeafZip _) -> l
@@ -54,9 +56,9 @@ findLeaf u z =
     Left (RedZip v l r c)
       | u < v ->     go (Right l) (Left $ RightRedCrumb v r c)
       | otherwise -> go (Right r) (Left $ LeftRedCrumb v l c)
-    Left (TempZip v l r c)
-      | u < v ->     go (Right l) (Left $ RightTempCrumb v r c)
-      | otherwise -> go (Right r) (Left $ LeftTempCrumb v l c)
+    Left TempZip {} ->
+      -- impossible: will never see TempZip on way down
+      error (show z)
   where go :: Either (Red m a) (Black m a) -> RBCrumb m a -> BlackZip Z a
         go n c = findLeaf u (toZip n c)
 
@@ -78,11 +80,6 @@ unwindB z =
     (LeafZip (Left (RightRedCrumb pv pr pc))) ->
       unwindR (RedZip pv Leaf pr pc)
 
-    (LeafZip (Left (LeftTempCrumb pv pl pc))) ->
-      unwindR (TempZip pv pl Leaf pc)
-    (LeafZip (Left (RightTempCrumb pv pr pc))) ->
-      unwindR (TempZip pv Leaf pr pc)
-
     (LeafZip (Right (LeftBlack2Crumb pv pl pc))) ->
       unwindB (Black2Zip pv pl Leaf pc)
     (LeafZip (Right (RightBlack2Crumb pv pr pc))) ->
@@ -97,11 +94,6 @@ unwindB z =
     (Black2Zip v l r (Left (RightRedCrumb pv pr pc))) ->
       unwindR (RedZip pv (Black2 v l r) pr pc)
 
-    (Black2Zip v l r (Left (LeftTempCrumb pv pl pc))) ->
-      unwindR (TempZip pv pl (Black2 v l r) pc)
-    (Black2Zip v l r (Left (RightTempCrumb pv pr pc))) ->
-      unwindR (TempZip pv (Black2 v l r) pr pc)
-
     (Black2Zip v l r (Right (LeftBlack2Crumb pv pl pc))) ->
       unwindB (Black2Zip pv pl (Black2 v l r) pc)
     (Black2Zip v l r (Right (RightBlack2Crumb pv pr pc))) ->
@@ -115,11 +107,6 @@ unwindB z =
       unwindR (RedZip pv pl (Black3 v l r) pc)
     (Black3Zip v l r (Left (RightRedCrumb pv pr pc))) ->
       unwindR (RedZip pv (Black3 v l r) pr pc)
-
-    (Black3Zip v l r (Left (LeftTempCrumb pv pl pc))) ->
-      unwindR (TempZip pv pl (Black3 v l r) pc)
-    (Black3Zip v l r (Left (RightTempCrumb pv pr pc))) ->
-      unwindR (TempZip pv (Black3 v l r) pr pc)
 
     (Black3Zip v l r (Right (LeftBlack2Crumb pv pl pc))) ->
       unwindB (Black2Zip pv pl (Black3 v l r) pc)
@@ -141,8 +128,8 @@ unwindR z = case z of
     -- rotate right + flip
     let xl = Black2 v l r
     in case hp of
-      Right bhp -> unwindB (Black2Zip b xr hr (Left $ LeftRedCrumb a xl bhp))
-      Left rhp -> unwindB (Black2Zip b xr hr (Left $ LeftTempCrumb a xl rhp))
+      Right bhp -> unwindR (RedZip a xl (Black2 b xr hr) bhp)
+      Left rhp -> unwindR (TempZip a xl (Black2 b xr hr) rhp)
 
   (TempZip _v _l _r (RightRedCrumb _b _xr (LeftBlack2Crumb _a _hl _hp))) ->
     -- impossible - needed a red right subtree
@@ -150,13 +137,6 @@ unwindR z = case z of
 
   (TempZip _v _l _r (RightRedCrumb _b _xr (LeftBlack3Crumb _a _hr _hp))) ->
     -- impossible - needed a red right subtree
-    error (show z)
-
-  (TempZip b xl xr (LeftTempCrumb a hl hc)) ->
-    -- rotate left
-    unwindR (TempZip a hl xl (RightTempCrumb b xr hc))
-  (TempZip _v _l _r (RightTempCrumb _a _xr _xp)) ->
-    -- this should never happen
     error (show z)
 
   (RedZip b xl xr (LeftBlack2Crumb a hl hp)) ->

@@ -58,10 +58,6 @@ data RedCrumb n a where
           a -> Black n a -> BlackCrumb (S n) a -> RedCrumb n a
         RightRedCrumb ::
           a -> Black n a -> BlackCrumb (S n) a -> RedCrumb n a
-        LeftTempCrumb ::
-          a -> Black n a -> RedCrumb n a -> RedCrumb n a
-        RightTempCrumb ::
-          a -> Black n a -> RedCrumb n a -> RedCrumb n a
 
 data BlackCrumb n a where
         LeftBlack2Crumb ::
