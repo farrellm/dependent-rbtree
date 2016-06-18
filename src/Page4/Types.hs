@@ -4,7 +4,7 @@
 module Page4.Types
   (Red(..)
   ,Black(..)
-  ,Root(..)
+  ,Tree(..)
   ,RBCrumb
   ,RedCrumb(..)
   ,BlackCrumb(..)
@@ -42,13 +42,13 @@ instance Foldable (Black n) where
   foldMap f (Black3 v l r) = foldMap f l `mappend` f v `mappend` foldMap f r
   foldMap f (Black4 v l r) = foldMap f l `mappend` f v `mappend` foldMap f r
 
-data Root a where
-  Root :: Black n a -> Root a
+data Tree a where
+  Tree :: Black n a -> Tree a
 
-deriving instance Show a => Show (Root a)
-deriving instance Functor Root
-deriving instance Foldable Root
-deriving instance Traversable Root
+deriving instance Show a => Show (Tree a)
+deriving instance Functor Tree
+deriving instance Foldable Tree
+deriving instance Traversable Tree
 
 type RBCrumb n a = Either (RedCrumb n a) (BlackCrumb (S n) a)
 

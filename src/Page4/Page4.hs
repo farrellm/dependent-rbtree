@@ -2,7 +2,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Page4.Page4
-  (Tree
+  (Tree()
   ,empty
   ,insert
   ) where
@@ -10,13 +10,11 @@ module Page4.Page4
 import Data.Type.Natural
 import Page4.Types
 
-type Tree = Root
+empty :: Tree a
+empty = Tree Leaf
 
-empty :: Root a
-empty = Root Leaf
-
-insert :: (Ord a, Show a) => Root a -> a -> Root a
-insert (Root r) v = unwindR . inject v . findLeaf v $ toRootZip r
+insert :: (Ord a, Show a) => Tree a -> a -> Tree a
+insert (Tree r) v = unwindR . inject v . findLeaf v $ toRootZip r
 
 toRootZip :: Black n a -> Either (RedZip n a) (BlackZip n a)
 toRootZip b = toZip (Right b) (Left RootCrumb)
@@ -61,13 +59,13 @@ inject :: a -> BlackZip Z a -> RedZip Z a
 inject v (LeafZip (Right c)) = RedZip v Leaf Leaf c
 inject v (LeafZip (Left c)) = TempZip v Leaf Leaf c
 
-unwindB :: Show a => BlackZip n a -> Root a
+unwindB :: Show a => BlackZip n a -> Tree a
 unwindB z =
   case z of
-    (LeafZip (Left RootCrumb)) -> Root Leaf
+    (LeafZip (Left RootCrumb)) -> Tree Leaf
 
-    (Black2Zip v l r (Left RootCrumb)) -> Root (Black2 v l r)
-    (Black3Zip v l r (Left RootCrumb)) -> Root (Black3 v l r)
+    (Black2Zip v l r (Left RootCrumb)) -> Tree (Black2 v l r)
+    (Black3Zip v l r (Left RootCrumb)) -> Tree (Black3 v l r)
 
     -- Leaf
     (LeafZip (Left (LeftRedCrumb pv pl pc))) ->
@@ -111,10 +109,10 @@ unwindB z =
     (Black3Zip v l r (Right (LeftBlack3Crumb pv pl pc))) ->
       unwindB (Black3Zip pv pl (Black3 v l r) pc)
 
-unwindR :: Show a => RedZip n a -> Root a
+unwindR :: Show a => RedZip n a -> Tree a
 unwindR z = case z of
   (TempZip v l r RootCrumb) ->
-    Root (Black2 v l r)
+    Tree (Black2 v l r)
 
   (TempZip b xl xr (LeftRedCrumb a hl hp)) ->
     -- left rotate
