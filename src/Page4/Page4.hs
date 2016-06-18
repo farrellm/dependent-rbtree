@@ -5,15 +5,10 @@ module Page4.Page4
   (Tree
   ,empty
   ,insert
-  ,unwindB
-  ,(&)
   ) where
 
 import Data.Type.Natural
 import Page4.Types
-
-(&) :: a -> (a->b) -> b
-x & f = f x
 
 type Tree = Root
 
