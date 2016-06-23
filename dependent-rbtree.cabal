@@ -20,6 +20,8 @@ library
                      , Page3
                      , Page4.Page4
                      , Page4.Types
+                     , Page5.RBTree
+                     , Page5.Types
   ghc-options:         -W
   build-depends:       base >= 4.7 && < 5
                      , QuickCheck

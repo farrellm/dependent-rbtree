@@ -6,9 +6,10 @@ import Data.List
 import Data.Foldable
 import Test.QuickCheck
 
-import Page2 ()
-import Page3 ()
-import qualified Page4.Page4 as RB
+-- import Page2 ()
+-- import Page3 ()
+-- import qualified Page4.Page4 as RB
+import qualified Page5.RBTree as RB
 
 deepCheck :: Testable prop => prop -> IO ()
 deepCheck = quickCheckWith stdArgs { maxSuccess = 1000, maxSize = 1000 }
